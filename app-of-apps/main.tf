@@ -2,7 +2,7 @@ terraform {
   required_providers {
     argocd = {
       source  = "oboukili/argocd"
-      version = ">= 5.0.2"
+      version = ">= 6.0.0"
     }
   }
 }
@@ -27,18 +27,16 @@ resource "argocd_application" "apps" {
   }
 
   spec {
-    project     = "default"
+    project     = "default" # zmień na var.project jeśli inny projekt!
     source {
       repo_url        = var.repo_url
       target_revision = "HEAD"
       path            = "apps"
     }
-
     destination {
-      server    = "https://kubernetes.default.svc"
+      server    = "https://kubernetes.default.svc/"
       namespace = var.app_namespace
     }
-
     sync_policy {
       automated {
         prune      = true
@@ -46,4 +44,5 @@ resource "argocd_application" "apps" {
       }
     }
   }
+  depends_on = [argocd_repository.this]
 }
